@@ -1,6 +1,6 @@
-from vista import miVentana, frame1, frame2, boton1, boton2, rojo, blanco, naranja, verde, azul, estado_color, back_color, registrosT, frame3, conx
-# from DB import basedatos
-from basedatos import basedatos
+from vista import miVentana, frame1, frame2, boton1, boton2, rojo, blanco, naranja, verde, azul, estado_color, back_color, registrosT, frame3, conx, insertar_tabla
+from DB import basedatos
+# from basedatos import basedatos
 from controllerArduino import arduino
 import threading
 import time
@@ -56,6 +56,22 @@ def leerSensores():
                 print(lectura)
                 estado_color.set(color)
                 db.insertar_registro(decodificar(lectura, "rojo"),decodificar(lectura, "verde"), decodificar(lectura, "azul"), decodificar(lectura, "color"))
+                time.sleep(1)
+                datos = db.consultar()
+                insertar_tabla(datos)
+            
+            while err:
+                estado_color.set("E")
+                time.sleep(.5)
+                estado_color.set("Er")
+                time.sleep(.5)
+                estado_color.set("Err")
+                time.sleep(.5)
+                estado_color.set("Erro")
+                time.sleep(.5)
+                estado_color.set("Error")
+                time.sleep(.5)
+                
         except Exception:
             print('sin lectura')           
             
@@ -66,7 +82,7 @@ def leerSensores():
 def finalizar():
     estaCorriendo= False
     hiloSensor.join(0.1)
-    tabla.join(0.1)
+    # tabla.join(0.1)
     miVentana.quit()
     miVentana.destroy()
     # arduino.close()
@@ -87,7 +103,7 @@ if __name__ == '__main__':
     miVentana.protocol("WM_DELETE_WINDOW", finalizar)
     hiloSensor = threading.Thread(target=leerSensores, daemon=True)
     
-    tabla = threading.Thread(target=datosTabla, daemon=True)
+    # tabla = threading.Thread(target=datosTabla, daemon=True)
     
     
     boton2.config(command=lambda:ocultar())
@@ -119,7 +135,9 @@ if __name__ == '__main__':
     # print(datos)
     # # if datos:
     # #     back_color.set(datos)
-        
+    datos = db.consultar()
+    # print(datos)
+    insertar_tabla(datos)
     col = arduino.consultar_servo()
     
     if col:
@@ -129,12 +147,17 @@ if __name__ == '__main__':
         # tabla.start()
     else:
         conx.set("ERROR al conectar con Arduino")
+        err = True
         
     try:
         time.sleep(1)
         hiloSensor.start()
+        
+            
+            
+            
     
-        tabla.start()
+        # tabla.start()
         
     except Exception:
         print('Error al lanzar el hilo...')

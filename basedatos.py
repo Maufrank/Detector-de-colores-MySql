@@ -36,17 +36,17 @@ class basedatos():
     #     consulta.close()
     #     return resultado
     
-    def consultar(self):
-        instruccion = "SELECT * FROM registros ORDER BY idRegistro DESC LIMIT 10;"
-        consulta = self.conexion.cursor()
-        consulta.execute(instruccion)
-        # resultado = ""
-        resultado = "idRe\tcolor\tfecha\t\thora\n"
-        # print("idRe\trojo\tverde\tazul\tcolor\tfecha\t\thora\n")
-        for (idRegistro, rojo, verde, azul, color, fecha, hora) in consulta:
-            resultado += "{}\t{}\t{}\t{}\n".format(idRegistro, color, fecha, hora)
-        consulta.close()
-        return resultado
+    # def consultar(self):
+    #     instruccion = "SELECT * FROM registros ORDER BY idRegistro DESC LIMIT 10;"
+    #     consulta = self.conexion.cursor()
+    #     consulta.execute(instruccion)
+    #     # resultado = ""
+    #     resultado = "idRe\tcolor\tfecha\t\thora\n"
+    #     # print("idRe\trojo\tverde\tazul\tcolor\tfecha\t\thora\n")
+    #     for (idRegistro, rojo, verde, azul, color, fecha, hora) in consulta:
+    #         resultado += "{}\t{}\t{}\t{}\n".format(idRegistro, color, fecha, hora)
+    #     consulta.close()
+    #     return resultado
     
     def filtro(self, color):
         instruccion = f"SELECT * FROM registros ORDER BY idRegistro DESC LIMIT 10 where color = {color};"
@@ -64,3 +64,15 @@ class basedatos():
         self.conexion.close()
         print("Conexion con la bd terminada")
 
+    def consultar(self):
+        instruccion = "SELECT * FROM registros ORDER BY idRegistro ASC;"
+        consulta = self.conexion.cursor()
+        consulta.execute(instruccion)
+        resultado = []
+        # resultado = "idRe\tcolor\tfecha\t\thora\n"
+        # print("idRe\trojo\tverde\tazul\tcolor\tfecha\t\thora\n")
+        datos = consulta
+        for (idRegistro, rojo, verde, azul, color, fecha, hora) in consulta:
+            resultado.append([idRegistro, color, fecha, hora])
+        consulta.close()
+        return resultado
